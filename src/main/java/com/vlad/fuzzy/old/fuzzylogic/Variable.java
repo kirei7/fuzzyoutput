@@ -1,4 +1,4 @@
-package com.vlad.fuzzy.knowledge;
+package com.vlad.fuzzy.old.fuzzylogic;
 
 import java.util.Set;
 
@@ -14,5 +14,10 @@ public class Variable {
     private int id;
 
     public Set<FuzzySet> terms;
+
+    public Variable withId(int id) {
+        setId(id);
+        return this;
+    }
 
 }

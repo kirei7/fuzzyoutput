@@ -1,4 +1,4 @@
-package com.vlad.fuzzy.knowledge;
+package com.vlad.fuzzy.old.fuzzylogic;
 
 import java.util.List;
 

@@ -40,7 +40,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>com.vlad.fuzzy.MamdaniAlgorythm</mainClass>
+              <mainClass>com.vlad.fuzzy.old.MamdaniAlgorythm</mainClass>
             </manifest>
           </archive>
         </configuration>

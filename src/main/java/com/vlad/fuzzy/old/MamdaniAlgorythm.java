@@ -1,6 +1,6 @@
-package com.vlad.fuzzy;
+package com.vlad.fuzzy.old;
 
-import com.vlad.fuzzy.knowledge.*;
+import com.vlad.fuzzy.old.fuzzylogic.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +15,7 @@ public class MamdaniAlgorythm {
     private int numberOfConclusions;
     private int numberOfConditions;
     private int numberOfInputVariables;
+    //не знаю почему 1, вроде 1
     private int numberOfOutputVariables;
     private int numberOfRules;
 
@@ -26,29 +27,35 @@ public class MamdaniAlgorythm {
             for (Condition condition : rule.getConditions())
                 numberOfConditions++;
             for (Conclusion conclusion : rule.getConclusions())
+            {
                 numberOfConclusions++;
+                numberOfOutputVariables = Math.max(numberOfOutputVariables, conclusion.getVariable().getId());
+            }
         }
+        numberOfOutputVariables++;
     }
 
-    public void run() {
+    /*
+    * ВАЖНО
+    * индекс элемента массива входных значений должен
+    * соответствовать индексу условия, в вычислении значения
+    * которого используется это значение*/
+    public void run(double[] inputVariables) {
+        //находим значения истинности для всех предусловий
+        double[] b = fuzzification(inputVariables);
+        //находим минимальное значение истинности для каждого правила
+        double[] c = aggregation(b);
 
+        List<ActivatedFuzzySet> activatedFuzzySets = activation(c);
+        /*for (ActivatedFuzzySet activatedFuzzySet : activatedFuzzySets) {
+            System.out.println(activatedFuzzySet.getTruthDegree());
+        }*/
+        List<UnionOfFuzzySets> union = accumulation(activatedFuzzySets);
+
+        double[] out = defuzzification(union, c);
+        for (double a : out) System.out.println(a);
     }
-    public void testRun() {
-        List<Conclusion> conclusions = new ArrayList<>();
-        List<Condition> conditions = new ArrayList<>();
-        Condition condition = new Condition();
-        condition.setTerm(new FuzzySet(20, 25));
-        Variable var = new Variable();
-        var.setId(0);
-        condition.setVariable(var);
-        conditions.add(condition);
-        numberOfConditions = 1;
-        rules.add(
-                new Rule(conditions, conclusions)
-        );
-        double[] testArr = {14};
-        System.out.println(fuzzification(testArr)[0]);
-    }
+
     /*
     Этот этап часто называют приведением к нечеткости. На вход поступают
     сформированная база правил и массив входных данных А = {a1, ..., am}.
@@ -68,7 +75,6 @@ public class MamdaniAlgorythm {
         for (Rule rule : rules) {
             for (Condition condition : rule.getConditions()) {
                 int j = condition.getVariable().getId();
-                System.out.println(condition);
                 FuzzySet term = condition.getTerm();
                 b[i] = term.getValue(inputData[j]);
                 i++;
@@ -86,7 +92,7 @@ public class MamdaniAlgorythm {
     private double[] aggregation(double[] b) {
         int i = 0;
         int j = 0;
-        double[] c = new double[numberOfInputVariables];
+        double[] c = new double[rules.size()];
         for (Rule rule : rules) {
             double truthOfConditions = 1.0;
             for (Condition condition : rule.getConditions()) {
@@ -105,21 +111,21 @@ public class MamdaniAlgorythm {
     Затем, опять же каждому i-му подзаключению, сопоставляется множество
     Di с новой функцией принадлежности. Её значение определяется как минимум
     из di и значения функции принадлежности терма из подзаключения.*/
-    /*private List<ActivatedFuzzySet> activation(double[] c) {
+    private List<ActivatedFuzzySet> activation(double[] c) {
         int i = 0;
         List<ActivatedFuzzySet> activatedFuzzySets = new ArrayList<ActivatedFuzzySet>();
         double[] d = new double[numberOfConclusions];
         for (Rule rule : rules) {
             for (Conclusion conclusion : rule.getConclusions()) {
                 d[i] = c[i]*conclusion.getWeight();
-                ActivatedFuzzySet activatedFuzzySet = (ActivatedFuzzySet) conclusion.getTerm();
+                ActivatedFuzzySet activatedFuzzySet = new ActivatedFuzzySet(conclusion.getTerm());
                 activatedFuzzySet.setTruthDegree(d[i]);
                 activatedFuzzySets.add(activatedFuzzySet);
                 i++;
             }
         }
         return activatedFuzzySets;
-    }*/
+    }
 
 
     /*
@@ -128,9 +134,11 @@ public class MamdaniAlgorythm {
     выходной переменной сопоставляется объединение множеств Ei = ∪ Dj. Где j —
     номера подзаключений в которых участвует i-aя выходная переменная (i = 1..s). */
 
-    /*private List<UnionOfFuzzySets> accumulation(List<ActivatedFuzzySet> activatedFuzzySets) {
-        List<UnionOfFuzzySets> unionsOfFuzzySets =
-                new ArrayList<UnionOfFuzzySets>(numberOfOutputVariables);
+    private List<UnionOfFuzzySets> accumulation(List<ActivatedFuzzySet> activatedFuzzySets) {
+        List<UnionOfFuzzySets> unionsOfFuzzySets = new ArrayList<>();
+        for (int i = 0; i < numberOfOutputVariables; i++) {
+            unionsOfFuzzySets.add( new UnionOfFuzzySets());
+        }
         for (Rule rule : rules) {
             for (Conclusion conclusion : rule.getConclusions()) {
                 int id = conclusion.getVariable().getId();
@@ -138,15 +146,8 @@ public class MamdaniAlgorythm {
             }
         }
         return unionsOfFuzzySets;
-    }*/
+    }
 
-    /*private double getMaxValue(double x) {
-        double result = 0.0;
-        for (FuzzySet fuzzySet : fuzzySets) {
-            result = Math.max(result, fuzzySet.getValue(x));
-        }
-        return result;
-    }*/
 
     /*
     Цель дефаззификациии получить количественное значение (crisp value)
@@ -156,13 +157,33 @@ public class MamdaniAlgorythm {
     итоговое количественное значение выходной переменной. В данной реализации
     алгоритма используется метод центра тяжести*/
 
-    /*private double[] defuzzification(List<UnionOfFuzzySets> unionsOfFuzzySets) {
+    private double[] defuzzification(List<UnionOfFuzzySets> unionsOfFuzzySets, double[] c) {
         double[] y = new double[numberOfOutputVariables];
+        double averageValue = avg(c);
         for(int i = 0; i < numberOfOutputVariables; i++) {
-            double i1 = integral(unionsOfFuzzySets.get(i), true);
-            double i2 = integral(unionsOfFuzzySets.get(i), false);
+            double i1 = integral(unionsOfFuzzySets.get(i), c[i], true);
+            double i2 = integral(unionsOfFuzzySets.get(i), c[i], false);
             y[i] = i1 / i2;
         }
         return y;
-    }*/
+    }
+
+    private double integral(UnionOfFuzzySets unionOfFuzzySets, double number, boolean b) {
+        if (b)
+            return Math.pow(unionOfFuzzySets.getValue(number), 2);
+        else
+            return unionOfFuzzySets.getValue(number);
+
+    }
+
+    private double avg(double[] c) {
+        if (c.length == 0)
+            return 0;
+
+        double sum = 0;
+        for (double number : c)
+            sum += number;
+
+        return sum / c.length;
+    }
 }

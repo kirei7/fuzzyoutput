@@ -1,15 +1,19 @@
 package com.vlad.fuzzy;
 
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.*;
 
-public class App
-{
-    public static void main(String[] args) throws FileNotFoundException {
+public class Test {
+    public static void main(String[] args) {
+        /*Rule rule = new Rule()
+                .withX1(0)
+                .withX2(0)
+                .withX3(0)
+                .withX4(0)
+                .withX5(2)
+                .withY(0.5f);
+        System.out.println(rule);*/
         //get list of rules
+        //RuleSetProvider setProvider = new CSVRuleSetProvider("/home/userok/study/rules/2ops.txt");
         RuleSetProvider setProvider = new CSVRuleSetProvider("/2ops.csv");
         List<Rule> rules = setProvider.getListOfRules();
         //variables of Y in all rules
@@ -17,10 +21,13 @@ public class App
         for (Rule r : rules) {
             rulesOutput.add(r.getY());
         }
+
+        System.out.println(rulesOutput.toString());
+
         //get input variables
         InputProvider inputProvider = new ConsoleInputProvider();
-        //double[] input = {1, 0, 1, 1, 1};
-        double[] input = inputProvider.getInput();
+        //double[] input = inputProvider.getInput();
+        double[] input = {1, 0, 1, 1, 1};
 
         //get a membership function for each input variable
         //with hardcoded SIGMA variable
@@ -33,8 +40,10 @@ public class App
             );
         }
 
-        //map for values of Y membership functions
-        Map<Float, Double> muY = new HashMap<>();
+        //array for values of Y membership functions
+        //N.B. array is automatically filled with zeros right after declaration
+        double[] muY = new double[rulesOutput.size()];
+        int i = 0;
         //for each variable of Y in rules
         for (Float Y : rulesOutput) {
             //for each rule find minimal truth degree (which is a result of evaluation of
@@ -51,12 +60,13 @@ public class App
                     minPerRule.add(min);
                 }
             }//end for rules
-            muY.put(Y, Collections.max(minPerRule));
+            muY[i] = Collections.max(minPerRule);
+            i++;
         }//end for outputs
 
         //outputting our muY
-        for (Map.Entry<Float, Double> entry : muY.entrySet()) {
-            System.out.println("muY(" + entry.getKey() + ") = " + entry.getValue());
+        for (double d : muY) {
+            System.out.println(d);
         }
     }
 }

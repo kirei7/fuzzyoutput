@@ -1,15 +1,11 @@
-package com.vlad.fuzzy.knowledge;
+package com.vlad.fuzzy.old.fuzzylogic;
 
 public class FuzzySet implements FuzzySetInterface {
 
-    private final double omega;
-    private final double x0;
+    protected final double omega;
+    protected final double x0;
 
-    //fix (delete?)
-    public FuzzySet() {
-        omega = 0;
-        x0 = 0;
-    }
+
     public FuzzySet(double omega, double x0) {
         this.omega = omega;
         this.x0 = x0;

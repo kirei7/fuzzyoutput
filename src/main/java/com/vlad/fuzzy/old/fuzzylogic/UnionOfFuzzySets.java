@@ -1,9 +1,14 @@
-package com.vlad.fuzzy.knowledge;
+package com.vlad.fuzzy.old.fuzzylogic;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UnionOfFuzzySets implements  FuzzySetInterface{
     private List<FuzzySetInterface> fuzzySets;
+
+    public UnionOfFuzzySets() {
+        fuzzySets = new ArrayList<>();
+    }
 
     private double getMaxValue(double x) {
         double result = 0.0;
@@ -20,6 +25,6 @@ public class UnionOfFuzzySets implements  FuzzySetInterface{
     //fix
     @Override
     public double getValue(double val) {
-        return 0;
+        return getMaxValue(val);
     }
 }
