@@ -43,11 +43,12 @@ public class App
             for (Rule r : rules) {
                 //if output variable of this rule equals to Y
                 double min;
-                if ( (r.getY() == Y) && r.getX5() == input[4]) {
+                if ( (r.getY() == Y)) {
                     min = membershipFunctions.get(input[0]).evaluate(r.getX1());
                     min = Math.min(min, membershipFunctions.get(input[1]).evaluate(r.getX2()));
                     min = Math.min(min, membershipFunctions.get(input[2]).evaluate(r.getX3()));
                     min = Math.min(min, membershipFunctions.get(input[3]).evaluate(r.getX4()));
+                    min = Math.min(min, membershipFunctions.get(input[4]).evaluate(r.getX5()));
                     minPerRule.add(min);
                 }
             }//end for rules
