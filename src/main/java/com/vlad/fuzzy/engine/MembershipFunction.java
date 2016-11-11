@@ -1,4 +1,4 @@
-package com.vlad.fuzzy;
+package com.vlad.fuzzy.engine;
 
 //gaussian membership function
 public class MembershipFunction {
@@ -10,10 +10,10 @@ public class MembershipFunction {
         this.sigma = sigma;
     }
 
-    //some googling claims that there should be not just sigma but 2*sigma
+    //evaluates the value of the function in point x
     public double evaluate(double x) {
         return Math.exp(
-                - ( Math.pow((x - top), 2) / Math.pow(sigma, 2))
+                (- 0.5) * ( Math.pow((x - top), 2) / Math.pow(sigma, 2))
         );
     }
 }

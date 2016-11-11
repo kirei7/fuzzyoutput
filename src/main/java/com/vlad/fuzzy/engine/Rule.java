@@ -1,4 +1,4 @@
-package com.vlad.fuzzy;
+package com.vlad.fuzzy.engine;
 
 public class Rule {
 

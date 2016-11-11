@@ -1,5 +1,7 @@
 package com.vlad.fuzzy;
 
+import com.vlad.fuzzy.engine.*;
+
 import java.util.*;
 
 public class Test {

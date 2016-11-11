@@ -4,7 +4,7 @@
 
   <groupId>com.vlad</groupId>
   <artifactId>fuzzyoutput</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>jar</packaging>
 
   <name>fuzzyoutput</name>
@@ -15,6 +15,11 @@
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+      <version>1.0.9</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -40,12 +45,33 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>com.vlad.fuzzy.old.MamdaniAlgorythm</mainClass>
+              <mainClass>com.vlad.fuzzy.App</mainClass>
             </manifest>
           </archive>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>com.vlad.fuzzy.App</mainClass>
+            </manifest>
+          </archive>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+      </plugin>
     </plugins>
+    <resources>
+      <resource>
+        <directory>resources</directory>
+        <includes>
+          <include>2ops.csv</include>
+        </includes>
+      </resource>
+    </resources>
   </build>
 
 </project>

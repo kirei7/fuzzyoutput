@@ -1,4 +1,4 @@
-package com.vlad.fuzzy;
+package com.vlad.fuzzy.engine;
 
 import java.io.BufferedReader;
 import java.io.IOException;
