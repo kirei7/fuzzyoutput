@@ -3,6 +3,7 @@ package com.vlad.fuzzy.ui;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.AxisSpace;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -20,13 +21,24 @@ import java.awt.*;
 
 public class Function2DRenderer extends ApplicationFrame {
 
+    private int rulesNum;
+    private String axisX;
+    private String axisY;
+    private String chartTitle;
+
     /**
      * Creates a new demo.
      *
      * @param title  the frame title.
      */
-    public Function2DRenderer(final String title, final XYDataset dataset) {
+    public Function2DRenderer(final String title, final XYDataset dataset, String axisX, String axisY, int rulesNum) {
         super(title);
+        this.rulesNum = rulesNum;
+        if (rulesNum == 0) {
+            chartTitle = title;
+        } else chartTitle = "Number of rules: " + rulesNum;
+        this.axisX = axisX;
+        this.axisY = axisY;
         final JFreeChart chart = createChart(dataset);
         final ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
@@ -46,9 +58,9 @@ public class Function2DRenderer extends ApplicationFrame {
 
         // create the chart...
         final JFreeChart chart = ChartFactory.createXYLineChart(
-                "Line Chart Demo 6",      // chart title
-                "X",                      // x axis label
-                "Y",                      // y axis label
+                chartTitle,      // chart title
+                axisX,                      // x axis label
+                axisY,                      // y axis label
                 dataset,                  // data
                 PlotOrientation.VERTICAL,
                 true,                     // include legend
@@ -64,19 +76,26 @@ public class Function2DRenderer extends ApplicationFrame {
 
         // get a reference to the plot for further customisation...
         final XYPlot plot = chart.getXYPlot();
-        plot.setBackgroundPaint(Color.lightGray);
+        plot.setBackgroundPaint(Color.white);
         //    plot.setAxisOffset(new Spacer(Spacer.ABSOLUTE, 5.0, 5.0, 5.0, 5.0));
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
 
+
         final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
         //makes ugly square points on the lines invisible
+        renderer.setSeriesShapesVisible(0, false);
         renderer.setSeriesShapesVisible(1, false);
+        renderer.setSeriesShapesVisible(2, false);
         plot.setRenderer(renderer);
 
         // change the auto tick unit selection to integer units only...
         final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        rangeAxis.setRange(0, 1.0);
+        //rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        final NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
+        domainAxis.setRange(0, 1.0);
+        //domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         // OPTIONAL CUSTOMISATION COMPLETED.
 
         return chart;

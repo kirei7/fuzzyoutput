@@ -1,6 +1,10 @@
 package com.vlad.fuzzy;
 
 import com.vlad.fuzzy.engine.*;
+import com.vlad.fuzzy.util.CSVRuleSetProvider;
+import com.vlad.fuzzy.util.ConsoleInputProvider;
+import com.vlad.fuzzy.util.InputProvider;
+import com.vlad.fuzzy.util.RuleSetProvider;
 
 import java.util.*;
 

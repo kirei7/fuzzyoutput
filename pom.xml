@@ -69,6 +69,9 @@
         <directory>resources</directory>
         <includes>
           <include>2ops.csv</include>
+          <include>4ops.csv</include>
+          <include>sigma.txt</include>
+          <include>realval.txt</include>
         </includes>
       </resource>
     </resources>

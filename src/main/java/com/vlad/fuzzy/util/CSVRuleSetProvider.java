@@ -1,4 +1,6 @@
-package com.vlad.fuzzy.engine;
+package com.vlad.fuzzy.util;
+
+import com.vlad.fuzzy.engine.Rule;
 
 import java.io.*;
 import java.util.ArrayList;

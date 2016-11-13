@@ -1,15 +1,25 @@
 package com.vlad.fuzzy.ui;
 
+import com.vlad.fuzzy.engine.MembershipFunction;
+import com.vlad.fuzzy.util.DataFetcher;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RefineryUtilities;
 
-public class InputRenderer {
-    private Function2DRenderer renderer;
+import java.util.List;
 
-    public InputRenderer(XYSeries[] series) {
-        renderer = new Function2DRenderer("JFreeChart: Function2DRenderer.java", createDataset(series));
+public class CustomRenderer {
+    private Function2DRenderer renderer;
+    private DataFetcher dataFetcher;
+    public CustomRenderer(String chartName, XYSeries[] series, String axisX, String axisY, int rulesNum) {
+        renderer = new Function2DRenderer(
+                chartName,
+                createDataset(series),
+                axisX,
+                axisY,
+                rulesNum
+        );
     }
     public void render() {
         renderer.pack();

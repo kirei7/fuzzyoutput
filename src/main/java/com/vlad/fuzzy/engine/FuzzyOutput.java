@@ -5,19 +5,16 @@ import java.util.*;
 public class FuzzyOutput {
 
     private List<MembershipFunction> membershipFunctions;
+    private List<Rule> rules;
+    private float SIGMA;
+    private double defuzzyfiedValue;
 
-    public void start() {
-        //get list of rules
-        RuleSetProvider setProvider = new CSVRuleSetProvider("/2ops.csv");
-        List<Rule> rules = setProvider.getListOfRules();
-        //get input variables
-        InputProvider inputProvider = new ConsoleInputProvider();
-        //double[] input = {1, 0, 1, 1, 1};
-        double[] input = inputProvider.getInput();
-
+    public FuzzyOutput(List<Rule> rules, float SIGMA) {
+        this.rules = rules;
+        this.SIGMA = SIGMA;
+    }
+    public Map<Float, Double> start(double[] input) {
         //get a membership function for each input variable
-        //with hardcoded SIGMA variable
-        float  SIGMA = 0.2f;
         membershipFunctions = createMembershipFunctions(input, SIGMA);
 
         //map for values of Y membership functions
@@ -27,12 +24,8 @@ public class FuzzyOutput {
                 membershipFunctions,
                 input
         );
-
-
-        //outputting our muY
-        for (Map.Entry<Float, Double> entry : muY.entrySet()) {
-            System.out.println("muY(" + entry.getKey() + ") = " + entry.getValue());
-        }
+        defuzzyfiedValue = defuzzyficate(muY);
+        return muY;
     }
     private Map<Float, Double> evaluateTruthDegree(List<Rule> rules,
                                                    List<MembershipFunction> membershipFunctions,
@@ -80,5 +73,18 @@ public class FuzzyOutput {
 
     public List<MembershipFunction> getMembershipFunctions() {
         return membershipFunctions;
+    }
+
+    private double defuzzyficate(Map<Float, Double> muY) {
+        double upSum = 0;
+        double lowSum = 0;
+        for(Map.Entry<Float, Double> entry : muY.entrySet()) {
+            upSum += entry.getKey() * entry.getValue();
+            lowSum += entry.getKey();
+        }
+        return upSum/lowSum;
+    }
+    public double getDefuzzyfiedValue() {
+        return defuzzyfiedValue;
     }
 }

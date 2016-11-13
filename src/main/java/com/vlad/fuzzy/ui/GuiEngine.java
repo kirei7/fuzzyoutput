@@ -2,37 +2,40 @@ package com.vlad.fuzzy.ui;
 
 
 import com.vlad.fuzzy.engine.MembershipFunction;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.RefineryUtilities;
+import com.vlad.fuzzy.util.DataFetcher;
 
 import java.util.List;
+import java.util.Map;
 
 public class GuiEngine {
-    private InputRenderer inputRenderer;
-    private OutputRenderer outputRenderer;
+    private DataFetcher dataFetcher;
+    private CustomRenderer inputRenderer;
+    private CustomRenderer outputRenderer;
 
-    public GuiEngine(List<MembershipFunction> membershipFunctions) {
-        inputRenderer = new InputRenderer(fetchDataSeries(membershipFunctions));
+    public GuiEngine() {
+        dataFetcher = new DataFetcher();
     }
 
-    public void start() {
+
+    public void renderInputs(List<MembershipFunction> membershipFunctions) {
+        inputRenderer = new CustomRenderer(
+                "Input data membership functions",
+                dataFetcher.fetchMembershipData(membershipFunctions),
+                "Xi",
+                "µ(Xi)",
+                0
+        );
         inputRenderer.render();
     }
 
-    private XYSeries[] fetchDataSeries(List<MembershipFunction> membershipFunctions) {
-        XYSeries[] seriesArray = new XYSeries[membershipFunctions.size() - 1];
-        for (int i = 0; i < membershipFunctions.size() - 1; i++) {
-            XYSeries series = new XYSeries("x" + (i + 1));
-            for (double y = 0.1; y < 1; y += 0.1) {
-                series.add(
-                        y,
-                        membershipFunctions.get(i).evaluate(y)
-                );
-            }
-            seriesArray[i] = series;
-        }
-        return seriesArray;
+    public void renderOutputs(List<Map<Float, Double>> outputs, float[] sigmaArray, int rulesNum) {
+        outputRenderer = new CustomRenderer(
+                "Output data",
+                dataFetcher.fetchMuData(outputs, sigmaArray),
+                "y",
+                "µ(y)",
+                rulesNum
+        );
+        outputRenderer.render();
     }
 }
