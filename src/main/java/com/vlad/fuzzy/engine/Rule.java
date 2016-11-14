@@ -51,7 +51,7 @@ public class Rule {
     }
     private void checkDirection(int num) {
         // check if the given wind direction is right
-        if (!(num == 1 || num == 2))
+        if (!(num == 1 || num == 2 || num == 3 || num == 4 || num == 5 || num == 6))
             throw new IllegalArgumentException("Wind direction value must be 1 or 2, but given: " + num);
     }
     //Getters/setters here

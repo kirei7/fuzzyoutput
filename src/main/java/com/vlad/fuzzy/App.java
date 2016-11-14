@@ -35,8 +35,8 @@ public class App
         InputProvider inputProvider = new ConsoleInputProvider();
         double[] input = inputProvider.getInput();
         List<Map<Float, Double>>
-                outputs2 = calculate(input, "/2ops.csv", sigmaArray),
-                outputs4 = calculate(input, "/4ops.csv", sigmaArray);
+                outputs2 = calculate(input, 2, sigmaArray),
+                outputs4 = calculate(input, 4, sigmaArray);
         Thread t1 = new Thread(() -> {
             gui.renderOutputs(outputs2, sigmaArray, 2);
         });
@@ -52,8 +52,8 @@ public class App
 
     }
 
-    public List<Map<Float, Double>> calculate(double[] input, String rulesPath, float[] sigmaArray) {
-        List<Rule> rules = new CSVRuleSetProvider(rulesPath).getListOfRules();
+    private List<Map<Float, Double>> calculate(double[] input, int opsNum, float[] sigmaArray) {
+        List<Rule> rules = new CalculatedRuleProvider(opsNum).getListOfRules();
         List<FuzzyOutput> algorythms = new ArrayList<>();
         for (float sigma : sigmaArray) {
             algorythms.add(
