@@ -46,7 +46,7 @@ public class App
         double realVal = new RealValueProvider().getFromFile("/realval.txt");
 
         //take second chart
-        double area = calcArea(outputs2.get(1), new MembershipFunction(realVal, sigmaArray[1]));
+        double area = calcArea(outputs2.get(2), new MembershipFunction(realVal, 0.1f));
 
         System.out.println("Area:" + area);
 
@@ -83,7 +83,12 @@ public class App
 
         for (double y = 0; y < 1; y += 0.01) {
             double outputPoint = interpolator.interpolate(output, y);
-            double mfPoint = membershipFunction.evaluate(y);
+            double mfPoint;
+            mfPoint = membershipFunction.evaluate(y);
+            /*for(double j = y; j < (y+0.1); j += 0.01) {
+                mfPoint = membershipFunction.evaluate(j);
+                series[1].add(j, mfPoint);
+            }*/
             double currentPoint = (outputPoint < mfPoint) ? outputPoint : mfPoint;
             area += currentPoint * 0.01;
             series[0].add(y, outputPoint);

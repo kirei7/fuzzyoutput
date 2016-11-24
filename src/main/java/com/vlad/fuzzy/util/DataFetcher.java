@@ -28,7 +28,7 @@ public class DataFetcher {
         XYSeries[] seriesArray = new XYSeries[outputs.size()];
         for (int i = 0; i < outputs.size(); i++) {
             XYSeries series = new XYSeries("\u03C3=" + sigmaArray[i]);
-            for (double y = 0; y < 1; y += 0.001) {
+            for (double y = 0; y < 1; y += 0.1) {
                 series.add(
                         y,
                         interpolator.interpolate(outputs.get(i), y)

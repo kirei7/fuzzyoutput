@@ -10,8 +10,9 @@ import org.jfree.ui.RefineryUtilities;
 import java.util.List;
 
 public class CustomRenderer {
-    private Function2DRenderer renderer;
-    private DataFetcher dataFetcher;
+    protected Function2DRenderer renderer;
+    protected DataFetcher dataFetcher;
+    public CustomRenderer() {}
     public CustomRenderer(String chartName, XYSeries[] series, String axisX, String axisY, int rulesNum) {
         renderer = new Function2DRenderer(
                 chartName,
@@ -27,7 +28,7 @@ public class CustomRenderer {
         renderer.setVisible(true);
     }
 
-    private XYDataset createDataset(XYSeries[] series) {
+    protected XYDataset createDataset(XYSeries[] series) {
         final XYSeriesCollection dataset = new XYSeriesCollection();
         for (XYSeries series1 : series) {
             dataset.addSeries(series1);
