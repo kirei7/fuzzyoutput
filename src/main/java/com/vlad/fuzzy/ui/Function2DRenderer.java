@@ -3,26 +3,18 @@ package com.vlad.fuzzy.ui;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.AxisSpace;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
-import org.jfree.chart.block.ColorBlock;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.LegendTitle;
-import org.jfree.data.function.Function2D;
-import org.jfree.data.general.DatasetUtilities;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.ApplicationFrame;
-import org.jfree.ui.RefineryUtilities;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class Function2DRenderer extends ApplicationFrame {
+public class Function2DRenderer extends JFrame {
 
     protected int rulesNum;
     protected String axisX;
@@ -36,6 +28,7 @@ public class Function2DRenderer extends ApplicationFrame {
      */
     public Function2DRenderer(final String title, final XYDataset dataset, String axisX, String axisY, int rulesNum) {
         super(title);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.rulesNum = rulesNum;
         if (rulesNum == 0) {
             chartTitle = title;
