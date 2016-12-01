@@ -6,6 +6,7 @@ import com.vlad.fuzzy.ui.GuiEngine;
 import com.vlad.fuzzy.util.*;
 import org.jfree.data.xy.XYSeries;
 
+import javax.swing.*;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ public class ProcessingEngine
     public float[] getSigmaArray() {
         return sigmaArray;
     }
+    private double calcedArea;
 
     public ProcessingEngine() {
         sigmaArray = new SigmaProvider().getFromFile("/sigma.txt");
@@ -43,7 +45,7 @@ public class ProcessingEngine
         return outputs;
     }
 
-    public double calcArea(double[] input, float realVal, float sigma, int numOfOperations) {
+    public JPanel calcArea(double[] input, float realVal, float sigma, int numOfOperations) {
         FuzzyOutput algorythm = new FuzzyOutput(
                 new CalculatedRuleProvider(numOfOperations).getListOfRules(),
                 sigma
@@ -68,8 +70,8 @@ public class ProcessingEngine
             series[0].add(y, outputPoint);
             series[1].add(y, mfPoint);
         }
+        calcedArea = area;
         CustomRenderer renderer = new CustomRenderer("Area", series, "Y", "\u03BC(Y)", 0);
-        renderer.render();
-        return area;
+        return renderer.render();
     }
 }

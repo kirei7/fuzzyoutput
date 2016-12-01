@@ -22,7 +22,8 @@ public class GuiEngine extends JFrame{
     private  float[] sigmaArray;
 
     //GUI fields
-    private Container container;
+    private Container topContainer;
+    private Panel chartPanel;
     //input fields
     private JLabel inputLabel;
     private JTextField[] inputX;
@@ -47,7 +48,7 @@ public class GuiEngine extends JFrame{
         super("Fuzzy output");
         this.processingEngine = processingEngine;
         int width = 550,
-                height = 250;
+                height = 520;
         this.setSize(new Dimension(width, height));
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
@@ -56,10 +57,10 @@ public class GuiEngine extends JFrame{
         sigmaArray = processingEngine.getSigmaArray();
 
         //main  container
-        Container topContainer = this.getContentPane();
+        topContainer = this.getContentPane();
         topContainer.setLayout(new GridLayout(2,1));
         //отримуємо загальний контейнер вікна
-        container = new JPanel(new GridLayout(6,1));
+        Container container = new JPanel(new GridLayout(6,1));
 
         //input fields
         inputLabel = new JLabel("Input variables:");
@@ -77,6 +78,9 @@ public class GuiEngine extends JFrame{
         container.add(prepareAreaCalcPanel());
         dataFetcher = new DataFetcher();
 
+
+        chartPanel = new Panel();
+        chartPanel.setSize(new Dimension(500, 270));
         topContainer.add(container);
     }
 
@@ -130,7 +134,7 @@ public class GuiEngine extends JFrame{
         panel.add(calcAreaButton);
         return panel;
     }
-    private void renderInputs(List<MembershipFunction> membershipFunctions) {
+    private JPanel renderInputs(List<MembershipFunction> membershipFunctions) {
         inputRenderer = new CustomRenderer(
                 "Input data membership functions",
                 dataFetcher.fetchMembershipData(membershipFunctions),
@@ -138,10 +142,10 @@ public class GuiEngine extends JFrame{
                 "µ(Xi)",
                 0
         );
-        inputRenderer.render();
+        return inputRenderer.render();
     }
 
-    private void renderOutputs(List<Map<Float, Double>> outputs, float[] sigmaArray, int rulesNum) {
+    private JPanel renderOutputs(List<Map<Float, Double>> outputs, float[] sigmaArray, int rulesNum) {
         outputRenderer = new CustomRenderer(
                 "Output data",
                 dataFetcher.fetchMuData(outputs, sigmaArray),
@@ -149,7 +153,7 @@ public class GuiEngine extends JFrame{
                 "µ(y)",
                 rulesNum
         );
-        outputRenderer.render();
+        return outputRenderer.render();
     }
     private Float[] getSigmaArray() {
         Float[] floats = new Float[sigmaArray.length];
@@ -167,18 +171,27 @@ public class GuiEngine extends JFrame{
                     input[i] = Double.parseDouble(inputX[i].getText().trim());
                 }
                 if (e.getSource() == ops2Button) {
-                    renderOutputs(
+                        try {
+                            topContainer.remove(1);
+                        } catch (ArrayIndexOutOfBoundsException ex){}
+
+                    topContainer.add(renderOutputs(
                             processingEngine.calculate(input, 2),
                             sigmaArray,
                             2
-                    );
+                    ));
+                    pack();
                 }
                 if (e.getSource() == ops4Button) {
-                    renderOutputs(
+                    try {
+                        topContainer.remove(1);
+                    } catch (ArrayIndexOutOfBoundsException ex){}
+                    topContainer.add(renderOutputs(
                             processingEngine.calculate(input, 4),
                             sigmaArray,
                             4
-                    );
+                    ));
+                    pack();
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -202,7 +215,12 @@ public class GuiEngine extends JFrame{
                 float realVal = Float.parseFloat(realValInput.getText().trim());
                 float sigma = sigmaArray[sigmaList.getSelectedIndex()];
                 int numberOfOperations = numOfOperations[rulesList.getSelectedIndex()];
-                processingEngine.calcArea(input, realVal, sigma, numberOfOperations);
+                try {
+                    topContainer.remove(1);
+                } catch (ArrayIndexOutOfBoundsException ex){}
+                topContainer.add(processingEngine.calcArea(input, realVal, sigma, numberOfOperations));
+                pack();
+                //display(((Container)topContainer.getComponent(1)).getComponents());
             } catch (Exception ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(
@@ -214,4 +232,12 @@ public class GuiEngine extends JFrame{
         }
     }
 
+    private void display(Component[] components) {
+        for (Component component : components) {
+            System.out.println(component.toString());
+            Container container = (Container)component;
+            display(container.getComponents());
+
+        }
+    }
 }

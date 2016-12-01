@@ -5,10 +5,13 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RefineryUtilities;
 
+import javax.swing.*;
+import java.awt.*;
+
 public class CustomRenderer {
-    protected Function2DRenderer renderer;
+    protected Function2DInnerRenderer renderer;
     public CustomRenderer(String chartName, XYSeries[] series, String axisX, String axisY, int rulesNum) {
-        renderer = new Function2DRenderer(
+        renderer = new Function2DInnerRenderer(
                 chartName,
                 createDataset(series),
                 axisX,
@@ -16,10 +19,9 @@ public class CustomRenderer {
                 rulesNum
         );
     }
-    public void render() {
-        renderer.pack();
-        RefineryUtilities.centerFrameOnScreen(renderer);
+    public JPanel render() {
         renderer.setVisible(true);
+        return renderer;
     }
 
     protected XYDataset createDataset(XYSeries[] series) {
