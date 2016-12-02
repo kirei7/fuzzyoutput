@@ -35,9 +35,9 @@ public class Function2DInnerRenderer extends JPanel {
         this.axisY = axisY;
         final JFreeChart chart = createChart(dataset);
         final ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(550, 270));
-        setSize(new Dimension(550, 270));
-        //chartPanel.setDomainZoomable(true);
+        Dimension size = new Dimension(520, 250);
+        chartPanel.setPreferredSize(size);
+        setPreferredSize(size);
         setLayout(new BorderLayout());
         add(chartPanel, BorderLayout.NORTH);
     }

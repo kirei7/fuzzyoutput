@@ -3,6 +3,8 @@ package com.vlad.fuzzy.ui;
 
 import com.vlad.fuzzy.engine.MembershipFunction;
 import com.vlad.fuzzy.engine.ProcessingEngine;
+import com.vlad.fuzzy.ui.tab.CalculationPane;
+import com.vlad.fuzzy.ui.tab.TabPanel;
 import com.vlad.fuzzy.util.DataFetcher;
 
 import javax.swing.*;
@@ -22,6 +24,7 @@ public class GuiEngine extends JFrame{
     private  float[] sigmaArray;
 
     //GUI fields
+    private Dimension sectionSize = new Dimension(520, 60);
     private Container topContainer;
     private Panel chartPanel;
     //input fields
@@ -33,6 +36,7 @@ public class GuiEngine extends JFrame{
     private JButton ops2Button;
     private JButton ops4Button;
     //calc area fields
+    private CalculationPane calculationPane;
     private JLabel calcAreaLabel;
     private JLabel rulesListLabel;
     private JLabel sigmaListLabel;
@@ -47,41 +51,38 @@ public class GuiEngine extends JFrame{
         //layout
         super("Fuzzy output");
         this.processingEngine = processingEngine;
-        int width = 550,
-                height = 520;
-        this.setSize(new Dimension(width, height));
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         sigmaArray = processingEngine.getSigmaArray();
-
         //main  container
         topContainer = this.getContentPane();
-        topContainer.setLayout(new GridLayout(2,1));
+        topContainer.setLayout(new BoxLayout(topContainer, BoxLayout.Y_AXIS));
         //отримуємо загальний контейнер вікна
-        Container container = new JPanel(new GridLayout(6,1));
-
-        //input fields
-        inputLabel = new JLabel("Input variables:");
+        Container container = new JPanel(new GridLayout(2,1));
         //output membership function fields
         mfOutputLabel = new JLabel("Draw output membership functions");
         //area of intersection fields
         calcAreaLabel = new JLabel("Figure's intersection area:");
-
         //place all elements into layout
-        container.add(inputLabel);
         container.add(prepareInputPanel());
-        container.add(mfOutputLabel);
+        calculationPane = new CalculationPane(
+                sectionSize,
+                new OperationsOutputListener(),
+                new AreaButtonListener(),
+                getSigmaArray()
+        );
+        container.add(calculationPane);
+        /*container.add(mfOutputLabel);
         container.add(prepareOutputMFPanel());
         container.add(calcAreaLabel);
-        container.add(prepareAreaCalcPanel());
+        container.add(prepareAreaCalcPanel());*/
         dataFetcher = new DataFetcher();
-
-
         chartPanel = new Panel();
-        chartPanel.setSize(new Dimension(500, 270));
+        chartPanel.setPreferredSize(new Dimension(520, 250));
         topContainer.add(container);
+        topContainer.add(chartPanel);
+        this.pack();
+        this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
     }
 
     private JPanel prepareInputPanel() {
@@ -99,9 +100,10 @@ public class GuiEngine extends JFrame{
             container.add(inputX[i]);
             panel.add(container);
         }
+        panel.setPreferredSize(sectionSize);
         return panel;
     }
-    private JPanel prepareOutputMFPanel() {
+    /*private JPanel prepareOutputMFPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         ops2Button = new JButton("Two operations");
         ops2Button.addActionListener(new OperationsOutputListener());
@@ -110,8 +112,12 @@ public class GuiEngine extends JFrame{
         panel.add(ops2Button);
         panel.add(ops4Button);
         return panel;
-    }
+    }*/
     private JPanel prepareAreaCalcPanel() {
+        JPanel containerPanel = new JPanel();
+        containerPanel.setLayout(new BoxLayout(containerPanel, 2));
+        inputLabel = new JLabel("Input variables");
+        containerPanel.add(inputLabel);
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         calcAreaButton = new JButton("Area");
         rulesListLabel = new JLabel("Number of operations: ");
@@ -132,7 +138,9 @@ public class GuiEngine extends JFrame{
         panel.add(rulesListLabel);
         panel.add(rulesList);
         panel.add(calcAreaButton);
-        return panel;
+
+        containerPanel.add(panel);
+        return containerPanel;
     }
     private JPanel renderInputs(List<MembershipFunction> membershipFunctions) {
         inputRenderer = new CustomRenderer(
@@ -170,8 +178,8 @@ public class GuiEngine extends JFrame{
                 for (int i = 0; i < input.length; i++) {
                     input[i] = Double.parseDouble(inputX[i].getText().trim());
                 }
-                if (e.getSource() == ops2Button) {
-                        try {
+                if (e.getSource() == calculationPane.getOps2Button()) {
+                    try {
                             topContainer.remove(1);
                         } catch (ArrayIndexOutOfBoundsException ex){}
 
@@ -182,7 +190,7 @@ public class GuiEngine extends JFrame{
                     ));
                     pack();
                 }
-                if (e.getSource() == ops4Button) {
+                if (e.getSource() == calculationPane.getOps4Button()) {
                     try {
                         topContainer.remove(1);
                     } catch (ArrayIndexOutOfBoundsException ex){}
@@ -204,7 +212,6 @@ public class GuiEngine extends JFrame{
         }
     }
     private class AreaButtonListener implements ActionListener {
-
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
@@ -212,9 +219,9 @@ public class GuiEngine extends JFrame{
                 for (int i = 0; i < input.length; i++) {
                     input[i] = Double.parseDouble(inputX[i].getText().trim());
                 }
-                float realVal = Float.parseFloat(realValInput.getText().trim());
-                float sigma = sigmaArray[sigmaList.getSelectedIndex()];
-                int numberOfOperations = numOfOperations[rulesList.getSelectedIndex()];
+                float realVal = Float.parseFloat(calculationPane.getRealValInput().getText().trim());
+                float sigma = sigmaArray[calculationPane.getSigmaList().getSelectedIndex()];
+                int numberOfOperations = calculationPane.getNumOfOperations()[calculationPane.getRulesList().getSelectedIndex()];
                 try {
                     topContainer.remove(1);
                 } catch (ArrayIndexOutOfBoundsException ex){}
